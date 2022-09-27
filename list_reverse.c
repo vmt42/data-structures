@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#undef DEBUG
+
 typedef struct List ListType;
 
 struct List {
@@ -44,12 +46,42 @@ ListType* gen_list(void) {
     return head;
 }
 
-void reverse_list_recursive(ListType *head) {
+ListType* reverse_list_recursive(ListType *head) {
 // TODO: implement this function
 }
 
-void reverse_list_iterative(ListType *head) {
+ListType* reverse_list_iterative(ListType *head) {
 // TODO: implement this function
+
+    ListType  *cur,
+              *prev,
+              *next;
+
+    if (!head || !head->next) // lazy evaluation (?)
+//    if (!head->next || !head) // wrong!!!
+        return head;
+
+    prev = head;
+    cur = head->next;
+    head->next = 0;
+
+    for (;;) {
+#ifdef DEBUG
+        printf("DEBUG cur->i = %d\n", cur->i);
+#endif
+        next = cur->next;
+        cur->next = prev;
+
+        if (!next) break;
+
+        prev = cur;
+        cur = next;
+    }
+#ifdef DEBUG
+    printf("DEBUG cur->next = %llu\n", (long long unsigned int) cur->next);
+#endif
+
+    return cur;
 }
 
 void main(void) {
@@ -58,14 +90,16 @@ void main(void) {
 
     print_list(head);
 
-    reverse_list_recursive(head);
+    head = reverse_list_recursive(head);
 
     printf("-----\n");
     print_list(head);
 
-    reverse_list_iterative(head);
+    head = reverse_list_iterative(head);
 
     printf("-----\n");
     print_list(head);
+
+    reverse_list_iterative(0);
 }
 
